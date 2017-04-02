@@ -302,7 +302,7 @@ function GetGameMetric(metricName) {
 /////////////////////////////////////////////////
 
 handlers.onLogin = function (args) {
-    log.info("onLogin()");
+    log.info("onLogin() HEY JOE");
     //AddMissingPlayerData(); 
     //SetLoggedInTime();
 
