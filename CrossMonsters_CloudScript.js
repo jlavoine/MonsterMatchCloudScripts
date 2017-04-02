@@ -10,7 +10,7 @@
 /// cloud script.
 /////////////////////////////////////////////////
 
-// TESTING GITHUB CONNECTION
+// TESTING GITHUB CONNECTION PART DEUX
 
 /// Title data
 const MONSTER_DATA_TITLE_KEY = "MonsterData";
@@ -302,7 +302,7 @@ function GetGameMetric(metricName) {
 /////////////////////////////////////////////////
 
 handlers.onLogin = function (args) {
-    log.info("onLogin() HEY JOE");
+    log.info("onLogin()");
     //AddMissingPlayerData(); 
     //SetLoggedInTime();
 
