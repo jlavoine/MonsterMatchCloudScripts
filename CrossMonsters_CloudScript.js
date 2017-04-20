@@ -341,13 +341,11 @@ function SetStartingStats(allSaveData) {
     allStats["PhyDef"] = GetStartingStat("PhyDef");
     startingStats["Stats"] = allStats;    
 
-    log.info(JSON.stringify(startingStats));
-
     allSaveData[STATS_PROGRESS] = startingStats;
 }
 
 function GetStartingStat(statName) {
-    var stat = [];
+    var stat = {};
     stat["Key"] = statName;
     stat["Level"] = 1;
 
