@@ -333,13 +333,15 @@ function AddMissingPlayerData() {
 
 function SetStartingStats(allSaveData) {
     var startingStats = {};
-    var allStats = [];
+    var allStats = {};
 
     allStats["HP"] = GetStartingStat("HP");
     allStats["WaveRegen"] = GetStartingStat("WaveRegen");
     allStats["PhyAtk"] = GetStartingStat("PhyAtk");
     allStats["PhyDef"] = GetStartingStat("PhyDef");
     startingStats["Stats"] = allStats;    
+
+    log.info(JSON.stringify(startingStats));
 
     allSaveData[STATS_PROGRESS] = startingStats;
 }
