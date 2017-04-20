@@ -334,13 +334,22 @@ function AddMissingPlayerData() {
 function SetStartingStats(allSaveData) {
     var startingStats = {};
     var allStats = [];
-    allStats["HP"] = 1;
-    allStats["WaveRegen"] = 1;
-    allStats["PhyAtk"] = 1;
-    allStats["PhyDef"] = 1;
+
+    allStats["HP"] = GetStartingStat("HP");
+    allStats["WaveRegen"] = GetStartingStat("WaveRegen");
+    allStats["PhyAtk"] = GetStartingStat("PhyAtk");
+    allStats["PhyDef"] = GetStartingStat("PhyDef");
     startingStats["Stats"] = allStats;    
 
     allSaveData[STATS_PROGRESS] = startingStats;
+}
+
+function GetStartingStat(statName) {
+    var stat = [];
+    stat["Key"] = statName;
+    stat["Level"] = 1;
+
+    return stat;
 }
 
 /// we use the logged in time to help verify the player's actions
