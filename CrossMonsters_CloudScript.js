@@ -57,6 +57,7 @@ const COMMON = "Common";
 
 // Required player save data
 const TREASURE_PROGRESS = "TreasureProgress";
+const STATS_PROGRESS = "StatsProgress";
 
 /// API specific
 const VIRTUAL_CURRENCY = "VirtualCurrency"; // API key for virtual currency
@@ -322,8 +323,24 @@ function AddMissingPlayerData() {
         allSaveData[TREASURE_PROGRESS] = [];        
     }
 
+    if (!allSaveData.hasOwnProperty(STATS_PROGRESS)) {
+        SetStartingStats(allSaveData);
+    }
+
     StringifySaveData(allSaveData);
     SetSaveDataWithObject(allSaveData, READ_ONLY);
+}
+
+function SetStartingStats(allSaveData) {
+    var startingStats = {};
+    var allStats = [];
+    allStats["HP"] = 1;
+    allStats["WaveRegen"] = 1;
+    allStats["PhyAtk"] = 1;
+    allStats["PhyDef"] = 1;
+    startingStats["Stats"] = allStats;    
+
+    allSaveData[STATS_PROGRESS] = startingStats;
 }
 
 /// we use the logged in time to help verify the player's actions
