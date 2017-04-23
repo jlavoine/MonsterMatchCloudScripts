@@ -61,6 +61,7 @@ const STATS_PROGRESS = "StatsProgress";
 
 /// API specific
 const VIRTUAL_CURRENCY = "VirtualCurrency"; // API key for virtual currency
+const INVENTORY = "Inventory";              // API key for a player's inventory
 const DATA = "Data";                        // API key for accessing data after getting the save data
 const VALUE = "Value";                      // API key for accessing the actual data value after getting the save data
 
@@ -307,6 +308,7 @@ handlers.onLogin = function (args) {
     //AddMissingPlayerData(); 
     //SetLoggedInTime();
     TestGrant();
+    TestConsumption();
 
     return ReturnDataToClientFromServer(Date.now());
 }
@@ -316,6 +318,17 @@ function TestGrant() {
     //var inventory = server.GetUserInventory({ PlayFabId: currentPlayerId });
     server.GrantItemsToUser({PlayFabId: currentPlayerId, ItemIds: ["Weekly_Key"]});
     log.info("Granted!");
+}
+
+function TestConsumption() {
+    log.info("Testing consumption");
+    var inventory = GetPlayerInventory();
+    var real = GetItemIdFromInventory(inventory, "Weekly_Key");
+    var fake = GetItemIdFromInventory(inventory, "Foo");
+    log.info(real);
+    log.info(fake);
+
+    server.ConsumeItem({PlayFabId: currentPlayerId, ItemInstanceId: real, ConsumeCount: 1});
 }
 
 // use this method to init any read only fields the client may need
@@ -868,6 +881,19 @@ function SetSaveDataWithObject(dataObject, dataType) {
 
 /////////////////////////////////////////////////
 /// ~Player data access
+/////////////////////////////////////////////////
+
+/////////////////////////////////////////////////
+/// Inventory
+/////////////////////////////////////////////////
+
+function GetItemIdFromInventory(inventory, itemKey) {
+    var allItems = inventory[INVENTORY];
+    return allItems[itemKey];
+}
+
+/////////////////////////////////////////////////
+/// ~Inventory
 /////////////////////////////////////////////////
 
 /////////////////////////////////////////////////
