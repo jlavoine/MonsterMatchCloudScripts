@@ -306,8 +306,16 @@ handlers.onLogin = function (args) {
     log.info("onLogin()");
     //AddMissingPlayerData(); 
     //SetLoggedInTime();
+    TestGrant();
 
     return ReturnDataToClientFromServer(Date.now());
+}
+
+function TestGrant() {
+    log.info("Trying my test grant");
+    //var inventory = server.GetUserInventory({ PlayFabId: currentPlayerId });
+    server.GrantItemsToUser({PlayFabId: currentPlayerId, ItemIds: ["Weekly_Key"]});
+    log.info("Granted!");
 }
 
 // use this method to init any read only fields the client may need
