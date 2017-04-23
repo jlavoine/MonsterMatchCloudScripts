@@ -323,7 +323,7 @@ function TestGrant() {
 function TestConsumption() {
     log.info("Testing consumption");
     var inventory = GetPlayerInventory();
-    var real = GetItemIdFromInventory(inventory, "Weekly_Key");
+    var real = GetItemIdFromInventory(inventory, "Daily_Key");
     var fake = GetItemIdFromInventory(inventory, "Foo");
     log.info(real);
     log.info(fake);
