@@ -890,6 +890,8 @@ function SetSaveDataWithObject(dataObject, dataType) {
 function GetItemIdFromInventory(inventory, itemKey) {
     var allItems = inventory[INVENTORY];
     for (var item in allItems) {
+        log.info(item);
+        log.info(JSON.stringify(item));
         if (item["ItemId"] == itemKey) {
             return item["ItemInstanceId"];
         }
