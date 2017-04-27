@@ -308,7 +308,7 @@ handlers.onLogin = function (args) {
     //AddMissingPlayerData(); 
     //SetLoggedInTime();
     TestGrant();
-    TestConsumption();
+    //TestConsumption();
 
     return ReturnDataToClientFromServer(Date.now());
 }
