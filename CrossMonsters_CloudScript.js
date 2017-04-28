@@ -17,6 +17,7 @@ const MONSTER_DATA_TITLE_KEY = "MonsterData";
 const DUNGEON_DATA_TITLE_KEY = "DungeonData";
 const MONSTER_GROUP_DATA_TITLE_KEY = "MonsterGroupData";
 const RARITY_DATA_TITLE_KEY = "RarityData";
+const TIMED_CHEST_TITLE_KEY = "TimedChests";
 
 /// Dungeon Data
 const AREA_ID = "AreaId";
@@ -57,6 +58,7 @@ const COMMON = "Common";
 
 // Required player save data
 const TREASURE_PROGRESS = "TreasureProgress";
+const TIMED_CHEST_PROGRESS = "TimedChestProgress";
 const STATS_PROGRESS = "StatsProgress";
 
 /// API specific
@@ -337,7 +339,7 @@ handlers.initPlayer = function (args) {
 }
 
 function AddMissingPlayerData() {
-    var saveKeysToCheck = [TREASURE_PROGRESS];
+    var saveKeysToCheck = [TREASURE_PROGRESS, TIMED_CHEST_PROGRESS, STATS_PROGRESS];
     var allSaveData = GetMultipleReadOnlySaveData(saveKeysToCheck);
 
     if (!allSaveData.hasOwnProperty(TREASURE_PROGRESS)) {
@@ -348,8 +350,33 @@ function AddMissingPlayerData() {
         SetStartingStats(allSaveData);
     }
 
+    if (!allSaveData.hasOwnProperty(TIMED_CHEST_PROGRESS))   {
+        SetStartingTimedChestProgress(allSaveData);
+    }  else {
+        UpdateTimedChestProgress(allSaveData);
+    }
+
     StringifySaveData(allSaveData);
     SetSaveDataWithObject(allSaveData, READ_ONLY);
+}
+
+function SetStartingTimedChestProgress(allSaveData) {
+    log.info("Setting starting timed chest progress");
+
+    var timedChestProgress = [];
+    var timedChestTitleData = GetTitleData(TIMED_CHEST_TITLE_KEY);
+
+    for (var index in timedChestTitleData) {
+        var timedChestData = timedChestTitleData[index];        
+        var progress = CreateTimedChestProgress(timedChestData);
+        timedChestProgress.push(progress);
+    }
+
+    allSaveData[TIMED_CHEST_PROGRESS] = timedChestProgress;
+}
+
+function UpdateTimedChestProgress(allSaveData) {
+
 }
 
 function SetStartingStats(allSaveData) {
@@ -477,6 +504,27 @@ function AddNewPlayerData_IfMissing(allSaveData) {
 
 /////////////////////////////////////////////////
 /// ~Login
+/////////////////////////////////////////////////
+
+/////////////////////////////////////////////////
+/// TimedChests
+/////////////////////////////////////////////////
+
+const TIMED_CHEST_ID = "Id";
+const TIMED_CHEST_AVAILABLE = "NextAvailableTime";
+
+function CreateTimedChestProgress(timedChestData) {
+    var id = timedChestData[TIMED_CHEST_ID];
+
+    var progress = {};
+    progress[TIMED_CHEST_ID] = id;
+    progress[TIMED_CHEST_AVAILABLE] = 0;
+
+    return progress;
+}
+
+/////////////////////////////////////////////////
+/// ~TimedChests
 /////////////////////////////////////////////////
 
 /////////////////////////////////////////////////
