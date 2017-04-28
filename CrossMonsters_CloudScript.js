@@ -375,8 +375,22 @@ function SetStartingTimedChestProgress(allSaveData) {
     allSaveData[TIMED_CHEST_PROGRESS] = timedChestProgress;
 }
 
+// This method is for updating existing timed chest progress, in case new timed chests must be added
 function UpdateTimedChestProgress(allSaveData) {
+    log.info("Checking to update timed chest progress");
+    
+    var timedChestProgress = allSaveData[TIMED_CHEST_PROGRESS];
+    var timedChestTitleData = GetTitleData(TIMED_CHEST_TITLE_KEY);
 
+    for (var index in timedChestTitleData) {
+        var timedChestData = timedChestTitleData[index];
+        var id = timedChestData[TIMED_CHEST_ID];
+
+        if (!timedChestProgress.hasOwnProperty(id)) {
+            var progress = CreateTimedChestProgress(timedChestData);
+            timedChestProgress.push(progress);
+        }
+    }
 }
 
 function SetStartingStats(allSaveData) {
