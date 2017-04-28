@@ -385,9 +385,8 @@ function UpdateTimedChestProgress(allSaveData) {
     for (var index in timedChestTitleData) {
         var timedChestData = timedChestTitleData[index];
         var id = timedChestData[TIMED_CHEST_ID];
-        log.info("Checking for id " + id);
+
         if (!timedChestProgress.hasOwnProperty(id)) {
-            log.info("didn't have it!");
             var progress = CreateTimedChestProgress(timedChestData);
             timedChestProgress[id] = progress;
         }
