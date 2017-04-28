@@ -363,13 +363,13 @@ function AddMissingPlayerData() {
 function SetStartingTimedChestProgress(allSaveData) {
     log.info("Setting starting timed chest progress");
 
-    var timedChestProgress = [];
+    var timedChestProgress = {};
     var timedChestTitleData = GetTitleData(TIMED_CHEST_TITLE_KEY);
 
     for (var index in timedChestTitleData) {
         var timedChestData = timedChestTitleData[index];        
         var progress = CreateTimedChestProgress(timedChestData);
-        timedChestProgress.push(progress);
+        timedChestProgress[timedChestData[TIMED_CHEST_ID]] = progress;
     }
 
     allSaveData[TIMED_CHEST_PROGRESS] = timedChestProgress;
@@ -378,7 +378,7 @@ function SetStartingTimedChestProgress(allSaveData) {
 // This method is for updating existing timed chest progress, in case new timed chests must be added
 function UpdateTimedChestProgress(allSaveData) {
     log.info("Checking to update timed chest progress");
-    
+
     var timedChestProgress = allSaveData[TIMED_CHEST_PROGRESS];
     var timedChestTitleData = GetTitleData(TIMED_CHEST_TITLE_KEY);
 
