@@ -526,20 +526,69 @@ function AddNewPlayerData_IfMissing(allSaveData) {
 
 const TIMED_CHEST_ID = "Id";
 const TIMED_CHEST_AVAILABLE = "NextAvailableTime";
+const TIMED_CHEST_KEYS_REQUIRED = "KeysRequired";
 
 handlers.openTimedChest = function(args) {
     log.info("openTimedChest");
 
-    var reward = CreateGoldReward(100);
-    var response = CreateRewardResponse(reward);
-
+    var response = TryToAwardTimedChest(args.data[TIMED_CHEST_ID]);
     return ReturnDataToClientFromServer(response);
+}
+
+function TryToAwardTimedChest(chestId) {
+    log.info("Trying to award timed chest: " + chestId);
+
+    var keysRequired = GetKeysRequiredForChest(chestId);
+    if (keysRequired > 0) {
+        var keyId = GetKeyId(chestId);
+        var inventory = GetPlayerInventory();
+        var count = GetItemUsesFromInventory(inventory, keyId);
+        var instanceId = GetItemInstanceFromInventory(inventory, keyId);
+
+        if (count >= keysRequired) {
+            log.info("Success!");
+            var reward = CreateGoldReward(100);
+            
+            AwardRewardToPlayer(reward);
+            ConsumeChestKeys(instanceId, keysRequired);
+
+            var response = CreateRewardResponse(reward);
+            return response;
+        } else {
+            return CreateInvalidRewardResponse();
+        }
+    } else {
+        return CreateInvalidRewardResponse();
+    }
+}
+
+function ConsumeChestKeys(keyInstanceId, count) {
+    server.ConsumeItem({PlayFabId: currentPlayerId, ItemInstanceId: keyInstanceId, ConsumeCount: count});
+}
+
+function GetKeysRequiredForChest(chestId) {
+    var timedChestTitleData = GetTitleData(TIMED_CHEST_TITLE_KEY);
+
+    for (var index in timedChestTitleData) {
+        var timedChestData = timedChestTitleData[index];        
+        var id = timedChestData[TIMED_CHEST_ID]
+        if (chestId == id) {
+            return timedChestData[TIMED_CHEST_KEYS_REQUIRED];
+        }
+    }
+
+    return 0;
 }
 
 function CreateRewardResponse(reward) {
     var response = {};
     response["Reward"] = reward;
 
+    return response;
+}
+
+function CreateInvalidRewardResponse() {
+    var response = {};
     return response;
 }
 
@@ -972,17 +1021,35 @@ function SetSaveDataWithObject(dataObject, dataType) {
 /////////////////////////////////////////////////
 
 function GetItemIdFromInventory(inventory, itemKey) {
+    var item = GetItemInstanceFromInventory(inventory, itemKey);
+    if (item != null) {
+        return item["ItemInstanceId"];
+    } else {
+        return null;
+    }
+}
+
+function GetItemUsesFromInventory(inventory, itemKey) {
+    var item = GetItemInstanceFromInventory(inventory, itemKey);
+    if (item != null) {
+        return item["RemainingUses"];
+    } else {
+        return 0;
+    }
+}
+
+function GetItemInstanceFromInventory(inventory, itemKey) {
     var allItems = inventory[INVENTORY];
     for (var itemIndex in allItems) {
         var item = allItems[itemIndex];
         log.info(item);
         log.info(JSON.stringify(item));
         if (item["ItemId"] == itemKey) {
-            return item["ItemInstanceId"];
+            return item;
         }
     }
     
-    return null;
+    return null;   
 }
 
 /////////////////////////////////////////////////
