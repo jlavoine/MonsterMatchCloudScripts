@@ -540,6 +540,7 @@ function TryToAwardTimedChest(chestId) {
     log.info("Trying to award timed chest: " + chestId);
 
     var keysRequired = GetKeysRequiredForChest(chestId);
+    log.info("keys needed = " + keysRequired);
     if (keysRequired > 0) {
         var keyId = GetKeyIdForCheset(chestId);
         var inventory = GetPlayerInventory();
@@ -556,6 +557,7 @@ function TryToAwardTimedChest(chestId) {
             var response = CreateRewardResponse(reward);
             return response;
         } else {
+            log.info("Not enough keys!");
             return CreateInvalidRewardResponse();
         }
     } else {
@@ -574,11 +576,11 @@ function GetKeysRequiredForChest(chestId) {
         var timedChestData = timedChestTitleData[index];        
         var id = timedChestData[TIMED_CHEST_ID]
         if (chestId == id) {
-            return timedChestData[TIMED_CHEST_KEY_ID];
+            return timedChestData[TIMED_CHEST_KEYS_REQUIRED];
         }
     }
 
-    return "NoId";
+    return 0;
 }
 
 function GetKeyIdForChest(chestId) {
@@ -588,11 +590,11 @@ function GetKeyIdForChest(chestId) {
         var timedChestData = timedChestTitleData[index];        
         var id = timedChestData[TIMED_CHEST_ID]
         if (chestId == id) {
-            return timedChestData[TIMED_CHEST_KEYS_REQUIRED];
+            return timedChestData[TIMED_CHEST_KEY_ID];
         }
     }
 
-    return 0;   
+    return "NoId";   
 }
 
 function CreateRewardResponse(reward) {
