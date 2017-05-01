@@ -527,6 +527,22 @@ function AddNewPlayerData_IfMissing(allSaveData) {
 const TIMED_CHEST_ID = "Id";
 const TIMED_CHEST_AVAILABLE = "NextAvailableTime";
 
+handlers.openTimedChest = function(args) {
+    log.info("openTimedChest");
+
+    var reward = CreateGoldReward(100);
+    var response = CreateRewardResponse(reward);
+
+    return ReturnDataToClientFromServer(response);
+}
+
+function CreateRewardResponse(reward) {
+    var response = {};
+    response["Reward"] = reward;
+
+    return response;
+}
+
 function CreateTimedChestProgress(timedChestData) {
     var id = timedChestData[TIMED_CHEST_ID];
 
@@ -585,6 +601,15 @@ function GetRewardId(reward) {
 
 function GetRewardType(reward) {
     return reward[REWARD_TYPE];
+}
+
+function CreateGoldReward(totalGold) {
+    var reward = {};        
+    reward[REWARD_ID] = REWARD_TYPE_GOLD;
+    reward[REWARD_TYPE] = REWARD_TYPE_GOLD;
+    reward[REWARD_COUNT] = totalGold;
+
+    return reward;
 }
 
 /////////////////////////////////////////////////
@@ -654,10 +679,7 @@ function SetRewardsOnSession(sessionRewardsList, dungeonData) {
         var randomGold = defaultGoldReward * randomGoldPercent;
         var totalGold = Math.ceil(defaultGoldReward + randomGold);
 
-        var reward = {};        
-        reward[REWARD_ID] = REWARD_TYPE_GOLD;
-        reward[REWARD_TYPE] = REWARD_TYPE_GOLD;
-        reward[REWARD_COUNT] = totalGold;
+        var reward = CreateGoldReward(totalGold);
 
         sessionRewardsList.push(reward);
     }
