@@ -527,6 +527,7 @@ function AddNewPlayerData_IfMissing(allSaveData) {
 const TIMED_CHEST_ID = "Id";
 const TIMED_CHEST_AVAILABLE = "NextAvailableTime";
 const TIMED_CHEST_KEYS_REQUIRED = "KeysRequired";
+const TIMED_CHEST_KEY_ID = "KeyId";
 
 handlers.openTimedChest = function(args) {
     log.info("openTimedChest");
@@ -540,7 +541,7 @@ function TryToAwardTimedChest(chestId) {
 
     var keysRequired = GetKeysRequiredForChest(chestId);
     if (keysRequired > 0) {
-        var keyId = GetKeyId(chestId);
+        var keyId = GetKeyIdForCheset(chestId);
         var inventory = GetPlayerInventory();
         var count = GetItemUsesFromInventory(inventory, keyId);
         var instanceId = GetItemInstanceFromInventory(inventory, keyId);
@@ -573,11 +574,25 @@ function GetKeysRequiredForChest(chestId) {
         var timedChestData = timedChestTitleData[index];        
         var id = timedChestData[TIMED_CHEST_ID]
         if (chestId == id) {
+            return timedChestData[TIMED_CHEST_KEY_ID];
+        }
+    }
+
+    return "NoId";
+}
+
+function GetKeyIdForChest(chestId) {
+     var timedChestTitleData = GetTitleData(TIMED_CHEST_TITLE_KEY);
+
+    for (var index in timedChestTitleData) {
+        var timedChestData = timedChestTitleData[index];        
+        var id = timedChestData[TIMED_CHEST_ID]
+        if (chestId == id) {
             return timedChestData[TIMED_CHEST_KEYS_REQUIRED];
         }
     }
 
-    return 0;
+    return 0;   
 }
 
 function CreateRewardResponse(reward) {
