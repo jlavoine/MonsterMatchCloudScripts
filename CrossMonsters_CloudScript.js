@@ -555,8 +555,8 @@ function TryToAwardTimedChest(chestId) {
             var nextAvailableTime = GetNextAvailableTimeForChest(chestId);
             
             AwardRewardToPlayer(reward);
-            ConsumeChestKeys(instanceId, keysRequired);
-            SaveNextChestTime(chsetId, nextAvailableTime);
+            //ConsumeChestKeys(instanceId, keysRequired);
+            SaveNextChestTime(chestId, nextAvailableTime);
 
             var response = CreateRewardResponse(reward, nextAvailableTime);
             return response;
