@@ -528,6 +528,7 @@ const TIMED_CHEST_ID = "Id";
 const TIMED_CHEST_AVAILABLE = "NextAvailableTime";
 const TIMED_CHEST_KEYS_REQUIRED = "KeysRequired";
 const TIMED_CHEST_KEY_ID = "KeyId";
+const TIMED_CHEST_RESET_TYPE = "ResetType";
 
 handlers.openTimedChest = function(args) {
     log.info("openTimedChest");
@@ -551,11 +552,13 @@ function TryToAwardTimedChest(chestId) {
         if (count >= keysRequired) {
             log.info("Success!");
             var reward = CreateGoldReward(100);
+            var nextAvailableTime = GetNextAvailableTimeForChest(chestId);
             
             AwardRewardToPlayer(reward);
             ConsumeChestKeys(instanceId, keysRequired);
+            SaveNextChestTime(chsetId, nextAvailableTime);
 
-            var response = CreateRewardResponse(reward);
+            var response = CreateRewardResponse(reward, nextAvailableTime);
             return response;
         } else {
             log.info("Not enough keys!");
@@ -572,36 +575,58 @@ function ConsumeChestKeys(keyInstanceId, count) {
 }
 
 function GetKeysRequiredForChest(chestId) {
-    var timedChestTitleData = GetTitleData(TIMED_CHEST_TITLE_KEY);
+    var timedChestData = GetTimedChestData(chestId);
+    if (timedChestData != null) {
+        return timedChestData[TIMED_CHEST_KEYS_REQUIRED];
+    } else {
+        return 0;
+    }  
+}
 
-    for (var index in timedChestTitleData) {
-        var timedChestData = timedChestTitleData[index];        
-        var id = timedChestData[TIMED_CHEST_ID]
-        if (chestId == id) {
-            return timedChestData[TIMED_CHEST_KEYS_REQUIRED];
+function GetNextAvailableTimeForChest(chestId) {
+    var timedChestData = GetTimedChestData(chestId);
+    if (timedChestData != null) {
+        var resetType = timedChestData[TIMED_CHEST_RESET_TYPE];
+        if (resetType == "Weekly") {
+            return Date.now() + 100000;
+        } else if (resetType == "Monthly") {
+            return Date.now() + 100000;
+        } else {
+            // default to daily
+            return Date.now() + 100000;
         }
+    } else {
+        return 0;
     }
-
-    return 0;
 }
 
 function GetKeyIdForChest(chestId) {
+    var timedChestData = GetTimedChestData(chestId);
+    if (timedChestData != null) {
+        return timedChestData[TIMED_CHEST_KEY_ID];
+    } else {
+        return "NoId";
+    }  
+}
+
+function GetTimedChestData(chestId) {
     var timedChestTitleData = GetTitleData(TIMED_CHEST_TITLE_KEY);
 
     for (var index in timedChestTitleData) {
         var timedChestData = timedChestTitleData[index];        
         var id = timedChestData[TIMED_CHEST_ID]
         if (chestId == id) {
-            return timedChestData[TIMED_CHEST_KEY_ID];
+            return timedChestData;
         }
     }
 
-    return "NoId";   
+    return null;
 }
 
-function CreateRewardResponse(reward) {
+function CreateRewardResponse(reward, nextAvailableTime) {
     var response = {};
     response["Reward"] = reward;
+    response[TIMED_CHEST_AVAILABLE] = nextAvailableTime;
 
     return response;
 }
@@ -619,6 +644,17 @@ function CreateTimedChestProgress(timedChestData) {
     progress[TIMED_CHEST_AVAILABLE] = 0;
 
     return progress;
+}
+
+function SaveNextChestTime(chestId, nextAvailableTime) {
+    log.info("Setting next chest available time for " + chestId + " to " + nextAvailableTime);
+
+    var allTimedChestSaveData = GetReadOnlySaveData(TIMED_CHEST_PROGRESS); 
+    var chestSaveData = allTimedChestSaveData[chestId];
+    chestSaveData[TIMED_CHEST_AVAILABLE] = nextAvailableTime;
+
+    log.info(JSON.stringify(allTimedChestSaveData));
+    SetReadOnlyData(TIMED_CHEST_PROGRESS, allTimedChestSaveData);
 }
 
 /////////////////////////////////////////////////
