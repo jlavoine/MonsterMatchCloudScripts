@@ -545,7 +545,7 @@ function TryToAwardTimedChest(chestId) {
         var keyId = GetKeyIdForChest(chestId);        
         var inventory = GetPlayerInventory();
         var count = GetItemUsesFromInventory(inventory, keyId);
-        var instanceId = GetItemInstanceFromInventory(inventory, keyId);
+        var instanceId = GetItemIdFromInventory(inventory, keyId);
 
         log.info(count + " vs " + keysRequired);
         if (count >= keysRequired) {
@@ -1062,12 +1062,12 @@ function GetItemUsesFromInventory(inventory, itemKey) {
 }
 
 function GetItemInstanceFromInventory(inventory, itemKey) {
-    log.info("Getting item insance for " + itemKey);
+    log.info("Getting item intsance for " + itemKey);
 
     var allItems = inventory[INVENTORY];
     for (var itemIndex in allItems) {
         var item = allItems[itemIndex];
-        log.info("Going thru all items: " + item);
+        log.info("Going thru all items: " + JSON.stringify(item));
         if (item["ItemId"] == itemKey) {
             return item;
         }
