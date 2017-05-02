@@ -547,6 +547,7 @@ function TryToAwardTimedChest(chestId) {
         var count = GetItemUsesFromInventory(inventory, keyId);
         var instanceId = GetItemInstanceFromInventory(inventory, keyId);
 
+        log.info(count + " vs " + keysRequired);
         if (count >= keysRequired) {
             log.info("Success!");
             var reward = CreateGoldReward(100);
@@ -566,6 +567,7 @@ function TryToAwardTimedChest(chestId) {
 }
 
 function ConsumeChestKeys(keyInstanceId, count) {
+    log.info("Consuming chest keys: " + keyInstanceId + " -- " + count);
     server.ConsumeItem({PlayFabId: currentPlayerId, ItemInstanceId: keyInstanceId, ConsumeCount: count});
 }
 
@@ -1038,6 +1040,8 @@ function SetSaveDataWithObject(dataObject, dataType) {
 /////////////////////////////////////////////////
 
 function GetItemIdFromInventory(inventory, itemKey) {
+    log.info("Getting item id for " + itemKey);
+
     var item = GetItemInstanceFromInventory(inventory, itemKey);
     if (item != null) {
         return item["ItemInstanceId"];
@@ -1047,6 +1051,8 @@ function GetItemIdFromInventory(inventory, itemKey) {
 }
 
 function GetItemUsesFromInventory(inventory, itemKey) {
+    log.info("Getting item uses for " + itemKey);
+
     var item = GetItemInstanceFromInventory(inventory, itemKey);
     if (item != null) {
         return item["RemainingUses"];
@@ -1056,11 +1062,12 @@ function GetItemUsesFromInventory(inventory, itemKey) {
 }
 
 function GetItemInstanceFromInventory(inventory, itemKey) {
+    log.info("Getting item insance for " + itemKey);
+
     var allItems = inventory[INVENTORY];
     for (var itemIndex in allItems) {
         var item = allItems[itemIndex];
-        log.info(item);
-        log.info(JSON.stringify(item));
+        log.info("Going thru all items: " + item);
         if (item["ItemId"] == itemKey) {
             return item;
         }
