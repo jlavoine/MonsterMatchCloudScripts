@@ -597,7 +597,7 @@ function GetNextAvailableTimeForChest(chestId) {
             return Date.today().next().month().getTime();
         } else {
             // default to daily
-            return today.setDate(today.getDate() + 1).getTime();     
+            return new Date(today.setDate(today.getDate() + 1)).getTime();     
         }
     } else {
         return 0;
