@@ -586,15 +586,19 @@ function GetKeysRequiredForChest(chestId) {
 function GetNextAvailableTimeForChest(chestId) {
     var timedChestData = GetTimedChestData(chestId);
     if (timedChestData != null) {
+        var nextAvailableDate;
         var resetType = timedChestData[TIMED_CHEST_RESET_TYPE];
         if (resetType == "Weekly") {
-            return Date.now() + 100000;
+            var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            nextAvailableDate = new Date(today.setDate(today.getDate()+today.getDay()));
         } else if (resetType == "Monthly") {
-            return Date.now() + 100000;
+            nextAvailableDate = Date.today().next().month();
         } else {
             // default to daily
-            return Date.now() + 100000;
+            nextAvailableDate.setDate(nextAvailableDate.getDate() + 1)       
         }
+
+        return nextAvailableDate.getTime();
     } else {
         return 0;
     }
@@ -653,7 +657,6 @@ function SaveNextChestTime(chestId, nextAvailableTime) {
     var chestSaveData = allTimedChestSaveData[chestId];
     chestSaveData[TIMED_CHEST_AVAILABLE] = nextAvailableTime;
 
-    log.info(JSON.stringify(allTimedChestSaveData));
     SetReadOnlyData(TIMED_CHEST_PROGRESS, allTimedChestSaveData);
 }
 
