@@ -584,8 +584,10 @@ function GetKeysRequiredForChest(chestId) {
 }
 
 function GetNextAvailableTimeForChest(chestId) {    
+    log.info("Getting next available time");
     var timedChestData = GetTimedChestData(chestId);
     if (timedChestData != null) {
+        var now = new Date();
         var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
         var resetType = timedChestData[TIMED_CHEST_RESET_TYPE];
         log.info("Getting next available time for " + resetType);
