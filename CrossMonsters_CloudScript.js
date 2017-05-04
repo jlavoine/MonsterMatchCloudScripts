@@ -594,7 +594,7 @@ function GetNextAvailableTimeForChest(chestId) {
         if (resetType == "Weekly") {            
             return new Date(today.setDate(today.getDate()+today.getDay())).getTime();
         } else if (resetType == "Monthly") {
-            Date nextMonth = Date.today().next().month();
+            var nextMonth = Date.today().next().month();
             return nextMonth.getTime();
         } else {
             // default to daily
