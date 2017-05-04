@@ -583,22 +583,20 @@ function GetKeysRequiredForChest(chestId) {
     }  
 }
 
-function GetNextAvailableTimeForChest(chestId) {
+function GetNextAvailableTimeForChest(chestId) {    
     var timedChestData = GetTimedChestData(chestId);
     if (timedChestData != null) {
-        var nextAvailableDate;
+        var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
         var resetType = timedChestData[TIMED_CHEST_RESET_TYPE];
-        if (resetType == "Weekly") {
-            var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-            nextAvailableDate = new Date(today.setDate(today.getDate()+today.getDay()));
+        log.info("Getting next available time for " + resetType);
+        if (resetType == "Weekly") {            
+            return new Date(today.setDate(today.getDate()+today.getDay())).getTime();
         } else if (resetType == "Monthly") {
-            nextAvailableDate = Date.today().next().month();
+            return Date.today().next().month().getTime();
         } else {
             // default to daily
-            nextAvailableDate.setDate(nextAvailableDate.getDate() + 1)       
+            return today.setDate(today.getDate() + 1).getTime();     
         }
-
-        return nextAvailableDate.getTime();
     } else {
         return 0;
     }
