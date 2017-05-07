@@ -18,6 +18,7 @@ const DUNGEON_DATA_TITLE_KEY = "DungeonData";
 const MONSTER_GROUP_DATA_TITLE_KEY = "MonsterGroupData";
 const RARITY_DATA_TITLE_KEY = "RarityData";
 const TIMED_CHEST_TITLE_KEY = "TimedChests";
+const LOGIN_PROMO_TITLE_KEY = "LoginPromotions";
 
 /// Dungeon Data
 const AREA_ID = "AreaId";
@@ -59,6 +60,7 @@ const COMMON = "Common";
 // Required player save data
 const TREASURE_PROGRESS = "TreasureProgress";
 const TIMED_CHEST_PROGRESS = "TimedChestProgress";
+const LOGIN_PROMO_PROGRESS = "LoginPromoProgress";
 const STATS_PROGRESS = "StatsProgress";
 
 /// API specific
@@ -339,7 +341,7 @@ handlers.initPlayer = function (args) {
 }
 
 function AddMissingPlayerData() {
-    var saveKeysToCheck = [TREASURE_PROGRESS, TIMED_CHEST_PROGRESS, STATS_PROGRESS];
+    var saveKeysToCheck = [TREASURE_PROGRESS, TIMED_CHEST_PROGRESS, STATS_PROGRESS, LOGIN_PROMO_PROGRESS];
     var allSaveData = GetMultipleReadOnlySaveData(saveKeysToCheck);
 
     if (!allSaveData.hasOwnProperty(TREASURE_PROGRESS)) {
@@ -350,11 +352,16 @@ function AddMissingPlayerData() {
         SetStartingStats(allSaveData);
     }
 
-    if (!allSaveData.hasOwnProperty(TIMED_CHEST_PROGRESS))   {
+    if (!allSaveData.hasOwnProperty(TIMED_CHEST_PROGRESS)) {
         SetStartingTimedChestProgress(allSaveData);
     }  else {
         UpdateTimedChestProgress(allSaveData);
     }
+
+    if (!allSaveData.hasOwnProperty(LOGIN_PROMO_PROGRESS)) {
+        SetStartingLoginPromoProgress(allSaveData);
+    }
+    UpdateLoginPromoProgress(allSaveData);
 
     StringifySaveData(allSaveData);
     SetSaveDataWithObject(allSaveData, READ_ONLY);
@@ -375,6 +382,13 @@ function SetStartingTimedChestProgress(allSaveData) {
     allSaveData[TIMED_CHEST_PROGRESS] = timedChestProgress;
 }
 
+function SetStartingLoginPromoProgress(allSaveData) {
+    log.info("Setting starting login promo progress");
+    var progress = {};
+
+    allSaveData[LOGIN_PROMO_PROGRESS] = progress;
+}
+
 // This method is for updating existing timed chest progress, in case new timed chests must be added
 function UpdateTimedChestProgress(allSaveData) {
     log.info("Checking to update timed chest progress");
@@ -389,6 +403,23 @@ function UpdateTimedChestProgress(allSaveData) {
         if (!timedChestProgress.hasOwnProperty(id)) {
             var progress = CreateTimedChestProgress(timedChestData);
             timedChestProgress[id] = progress;
+        }
+    }
+}
+
+function UpdateLoginPromoProgress(allSaveData) {
+    log.info("Upating login promo progress");
+
+    var promoProgress = allSaveData[LOGIN_PROMO_PROGRESS];
+    var promoTitleData = GetTitleData(LOGIN_PROMO_TITLE_KEY);
+
+    for (var index in promoTitleData) {
+        var promoData = promoTitleData[index];
+        var id = promoData[PROMO_ID];
+
+        if (!promoProgress.hasOwnProperty(id)) {
+            var progress = CreateLoginPromoProgress(promoData);
+            promoProgress[id] = progress;
         }
     }
 }
@@ -521,6 +552,29 @@ function AddNewPlayerData_IfMissing(allSaveData) {
 /////////////////////////////////////////////////
 
 /////////////////////////////////////////////////
+/// LoginPromotions
+////////////////////////////////////////////////
+
+const PROMO_ID = "Id";
+const PROMO_LAST_COLLECTED_TIME = "LastCollectedTime";
+const PROMO_COLLECT_COUNT = "CollectCount";
+
+function CreateLoginPromoProgress(promoData) {
+    var id = promoData[PROMO_ID];
+
+    var progress = {};
+    progress[PROMO_ID] = id;
+    progress[PROMO_LAST_COLLECTED_TIME] = 0;
+    progress[PROMO_COLLECT_COUNT] = 0;
+
+    return progress;
+}
+
+/////////////////////////////////////////////////
+/// ~LoginPromotions
+////////////////////////////////////////////////
+
+/////////////////////////////////////////////////
 /// TimedChests
 /////////////////////////////////////////////////
 
@@ -555,7 +609,7 @@ function TryToAwardTimedChest(chestId) {
             var nextAvailableTime = GetNextAvailableTimeForChest(chestId);
             
             AwardRewardToPlayer(reward);
-            //ConsumeChestKeys(instanceId, keysRequired);
+            ConsumeChestKeys(instanceId, keysRequired);
             SaveNextChestTime(chestId, nextAvailableTime);
 
             var response = CreateRewardResponse(reward, nextAvailableTime);
