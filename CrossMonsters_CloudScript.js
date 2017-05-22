@@ -575,16 +575,28 @@ handlers.updateAndAwardLoginPromo = function(args) {
 
     var promoId = args.data[PROMO_ID];
     var allPromoProgress = GetReadOnlySaveData(LOGIN_PROMO_PROGRESS);
-    var promoData = GetPromoData(promoId);
+    var promoData = GetPromoData(promoId);    
 
     if (allPromoProgress.hasOwnProperty(promoId) && promoData != null) {
-        log.info("Seems legit");
         var progress = allPromoProgress[promoId];
+        var upcomingRewardDay = progress[PROMO_COLLECT_COUNT] + 1;
 
+        AwardPromoReward(upcomingRewardDay, data);
         UpdatePromoProgress(progress);
-
-        log.info("updated, saving");
         SetReadOnlyData(LOGIN_PROMO_PROGRESS, allPromoProgress);
+    }
+}
+
+function AwardPromoReward(day, data) {
+    log.info("awarding day " + day);
+    var rewards = data["RewardData"];
+
+    for (var index in rewards) {
+        if (index == day) {
+            var reward = rewards[index];
+            log.info("about to reward " + JSON.stringify(reward));
+            AwardRewardToPlayer(reward);
+        }
     }
 }
 
