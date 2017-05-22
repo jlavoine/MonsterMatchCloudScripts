@@ -581,7 +581,7 @@ handlers.updateAndAwardLoginPromo = function(args) {
         var progress = allPromoProgress[promoId];
         var upcomingRewardDay = progress[PROMO_COLLECT_COUNT] + 1;
 
-        AwardPromoReward(upcomingRewardDay, data);
+        AwardPromoReward(upcomingRewardDay, promoData);
         UpdatePromoProgress(progress);
         SetReadOnlyData(LOGIN_PROMO_PROGRESS, allPromoProgress);
     }
