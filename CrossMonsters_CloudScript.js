@@ -596,13 +596,14 @@ function ShouldAwardPromoReward(progress, data) {
     var lastCollectedTime = progress[PROMO_LAST_COLLECTED_TIME];  
 
     var lastCollectedDate = new Date(lastCollectedTime);
+    var lastCollectedDay = new Date(lastCollectedDate.getFullYear(), lastCollectedDate.getMonth(), lastCollectedDate.getDate())
     var now = new Date();
     var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
     var totalRewards = data["RewardData"].length;
 
     log.info("Comparing " + upcomingRewardIndex + " to " + totalRewards);
-    log.info("Comparing " + lastCollectedDate + " to " + today);
+    log.info("Comparing " + lastCollectedDay + " to " + today);
     log.info("Comparing " + lastCollectedDate.getDate() + " to " + today.getDate());
 
     var rewardsRemaining = upcomingRewardIndex < totalRewards;
