@@ -592,7 +592,23 @@ handlers.updateAndAwardLoginPromo = function(args) {
 function ShouldAwardPromoReward(progress, data) {
     log.info("Checking if promo reward should be awarded");
 
-    var upcomingRewardIndex = progress[PROMO_COLLECT_COUNT];  
+    var canCollect = !HasCollectedPromoRewardToday(progress, data);
+    var rewardsRemaining = AreRewardsRemainingInPromo(progress, data);
+
+    log.info(rewardsRemaining + " and " + canCollect);
+
+    return canCollect && rewardsRemaining;
+}
+
+function AreRewardsRemainingInPromo(progress, data) {
+    var upcomingRewardIndex = progress[PROMO_COLLECT_COUNT]; 
+    var totalRewards = data["RewardData"].length;
+
+    log.info("Comparing " + upcomingRewardIndex + " to " + totalRewards);
+    return upcomingRewardIndex < totalRewards;
+}
+
+function HasCollectedPromoRewardToday(progress, data) {
     var lastCollectedTime = progress[PROMO_LAST_COLLECTED_TIME];  
 
     var lastCollectedDate = new Date(lastCollectedTime);
@@ -600,17 +616,8 @@ function ShouldAwardPromoReward(progress, data) {
     var now = new Date();
     var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
-    var totalRewards = data["RewardData"].length;
-
-    log.info("Comparing " + upcomingRewardIndex + " to " + totalRewards);
     log.info("Comparing " + lastCollectedDay + " to " + today);
-    log.info("Comparing " + lastCollectedDate.getDate() + " to " + today.getDate());
-
-    var rewardsRemaining = upcomingRewardIndex < totalRewards;
-
-    log.info(rewardsRemaining);
-
-    return true;
+    return lastCollectedDay >= today;
 }
 
 function AwardPromoReward(rewardIndex, data) {
