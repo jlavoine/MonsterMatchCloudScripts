@@ -579,22 +579,20 @@ handlers.updateAndAwardLoginPromo = function(args) {
 
     if (allPromoProgress.hasOwnProperty(promoId) && promoData != null) {
         var progress = allPromoProgress[promoId];
-        var upcomingRewardDay = progress[PROMO_COLLECT_COUNT] + 1;
+        var upcomingRewardIndex = progress[PROMO_COLLECT_COUNT];
 
-        AwardPromoReward(upcomingRewardDay, promoData);
+        AwardPromoReward(upcomingRewardIndex, promoData);
         UpdatePromoProgress(progress);
         SetReadOnlyData(LOGIN_PROMO_PROGRESS, allPromoProgress);
     }
 }
 
-function AwardPromoReward(day, data) {
-    log.info("awarding day " + day);
+function AwardPromoReward(rewardIndex, data) {
     var rewards = data["RewardData"];
 
     for (var index in rewards) {
-        if (index == day) {
+        if (index == rewardIndex) {
             var reward = rewards[index];
-            log.info("about to reward " + JSON.stringify(reward));
             AwardRewardToPlayer(reward);
         }
     }
