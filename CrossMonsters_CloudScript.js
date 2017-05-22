@@ -581,7 +581,7 @@ handlers.updateAndAwardLoginPromo = function(args) {
         log.info("Seems legit");
         var progress = allPromoProgress[promoId];
 
-        allPromoProgress[allPromoProgress] = UpdatePromoProgress(progress);
+        UpdatePromoProgress(progress);
 
         log.info("updated, saving");
         SetReadOnlyData(LOGIN_PROMO_PROGRESS, allPromoProgress);
@@ -607,8 +607,6 @@ function UpdatePromoProgress(progress) {
     progress[PROMO_LAST_COLLECTED_TIME] = Date.now();
     progress[PROMO_COLLECT_COUNT] += 1;
     log.info("its " + JSON.stringify(progress));
-
-    return progress;
 }
 
 /////////////////////////////////////////////////
