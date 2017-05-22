@@ -602,7 +602,9 @@ function ShouldAwardPromoReward(progress, data) {
     var totalRewards = data["RewardData"].length;
 
     log.info("Comparing " + upcomingRewardIndex + " to " + totalRewards);
-    log.info("Comparing " + lastCollectedTime + " to " + today);
+    log.info("Comparing " + lastCollectedDate + " to " + today);
+
+    var rewardsRemaining = upcomingRewardIndex < totalRewards;
 
     return true;
 }
