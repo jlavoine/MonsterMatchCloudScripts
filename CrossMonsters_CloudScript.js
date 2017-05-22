@@ -570,14 +570,15 @@ function CreateLoginPromoProgress(promoData) {
     return progress;
 }
 
-handlers.updateAndAwardLoginPromos = function(args) {
+handlers.updateAndAwardLoginPromo = function(args) {
     log.info("Updating and awarding login promos");
 
     var promoId = args.data[PROMO_ID];
     var allPromoProgress = GetReadOnlySaveData(LOGIN_PROMO_PROGRESS);
-    var allPromoTitleData = GetTitleData(LOGIN_PROMO_TITLE_KEY);
+    var promoData = GetPromoData(promoId);
 
-    if (allPromoProgress.hasOwnProperty(promoId) && allPromoTitleData.hasOwnProperty(promoId)) {
+    log.info("looking for promo " + promoId);
+    if (allPromoProgress.hasOwnProperty(promoId) && promoData != null) {
         log.info("Seems legit");
         var progress = allPromoProgress[promoId];
         var data = allPromoTitleData[promoId];
@@ -586,6 +587,21 @@ handlers.updateAndAwardLoginPromos = function(args) {
 
         SetReadOnlyData(LOGIN_PROMO_PROGRESS, allPromoProgress);
     }
+}
+
+function GetPromoData(promoId) {
+    var promoTitleData = GetTitleData(LOGIN_PROMO_TITLE_KEY);
+
+    for (var index in promoTitleData) {
+        var promoData = promoTitleData[index];
+        var id = promoData[PROMO_ID];
+
+        if (promoId == id) {
+            return promoData;
+        }
+    }
+
+    return null;
 }
 
 function UpdatePromoProgress(progress) {
