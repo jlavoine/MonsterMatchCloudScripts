@@ -570,6 +570,29 @@ function CreateLoginPromoProgress(promoData) {
     return progress;
 }
 
+handlers.updateAndAwardLoginPromos = function(args) {
+    log.info("Updating and awarding login promos");
+
+    var promoId = args.data[PROMO_ID];
+    var allPromoProgress = GetReadOnlySaveData(LOGIN_PROMO_PROGRESS);
+    var allPromoTitleData = GetTitleData(LOGIN_PROMO_TITLE_KEY);
+
+    if (allPromoProgress.hasOwnProperty(promoId) && allPromoTitleData.hasOwnProperty(promoId)) {
+        log.info("Seems legit");
+        var progress = allPromoProgress[promoId];
+        var data = allPromoTitleData[promoId];
+
+        UpdatePromoProgress(progress);
+
+        SetReadOnlyData(LOGIN_PROMO_PROGRESS, allPromoProgress);
+    }
+}
+
+function UpdatePromoProgress(progress) {
+    progress[PROMO_LAST_COLLECTED_TIME] = Date.now();
+    progress[PROMO_COLLECT_COUNT] += 1;
+}
+
 /////////////////////////////////////////////////
 /// ~LoginPromotions
 ////////////////////////////////////////////////
