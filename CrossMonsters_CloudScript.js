@@ -596,6 +596,7 @@ function ShouldAwardPromoReward(progress, data) {
     var lastCollectedTime = progress[PROMO_LAST_COLLECTED_TIME];  
 
     var lastCollectedDate = new Date(lastCollectedTime);
+    var now = new Date();
     var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
     var totalRewards = data["RewardData"].length;
