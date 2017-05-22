@@ -581,10 +581,29 @@ handlers.updateAndAwardLoginPromo = function(args) {
         var progress = allPromoProgress[promoId];
         var upcomingRewardIndex = progress[PROMO_COLLECT_COUNT];
 
-        AwardPromoReward(upcomingRewardIndex, promoData);
-        UpdatePromoProgress(progress);
-        SetReadOnlyData(LOGIN_PROMO_PROGRESS, allPromoProgress);
+        if (ShouldAwardPromoReward(progress, promoData)) {
+            AwardPromoReward(upcomingRewardIndex, promoData);
+            UpdatePromoProgress(progress);
+            SetReadOnlyData(LOGIN_PROMO_PROGRESS, allPromoProgress);
+        }
     }
+}
+
+function ShouldAwardPromoReward(progress, data) {
+    log.info("Checking if promo reward should be awarded");
+
+    var upcomingRewardIndex = progress[PROMO_COLLECT_COUNT];  
+    var lastCollectedTime = progress[PROMO_LAST_COLLECTED_TIME];  
+
+    var lastCollectedDate = new Date(lastCollectedTime);
+    var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+    var totalRewards = data["RewardData"].length;
+
+    log.info("Comparing " + upcomingRewardIndex + " to " + totalRewards);
+    log.info("Comparing " + lastCollectedTime + " to " + today);
+
+    return true;
 }
 
 function AwardPromoReward(rewardIndex, data) {
@@ -693,7 +712,7 @@ function GetNextAvailableTimeForChest(chestId) {
         var now = new Date();
         var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
         var resetType = timedChestData[TIMED_CHEST_RESET_TYPE];
-        log.info("Getting next available time for " + resetType);
+        
         if (resetType == "Weekly") {            
             return new Date(today.setDate(today.getDate()+today.getDay())).getTime();
         } else if (resetType == "Monthly") {
