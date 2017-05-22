@@ -603,8 +603,11 @@ function ShouldAwardPromoReward(progress, data) {
 
     log.info("Comparing " + upcomingRewardIndex + " to " + totalRewards);
     log.info("Comparing " + lastCollectedDate + " to " + today);
+    log.info("Comparing " + lastCollectedDate.getDate() + " to " + today.getDate());
 
     var rewardsRemaining = upcomingRewardIndex < totalRewards;
+
+    log.info(rewardsRemaining);
 
     return true;
 }
