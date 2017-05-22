@@ -580,7 +580,6 @@ handlers.updateAndAwardLoginPromo = function(args) {
     if (allPromoProgress.hasOwnProperty(promoId) && promoData != null) {
         log.info("Seems legit");
         var progress = allPromoProgress[promoId];
-        var data = allPromoTitleData[promoId];
 
         allPromoProgress[allPromoProgress] = UpdatePromoProgress(progress);
 
