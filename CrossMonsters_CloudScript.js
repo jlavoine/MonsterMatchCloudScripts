@@ -577,14 +577,14 @@ handlers.updateAndAwardLoginPromo = function(args) {
     var allPromoProgress = GetReadOnlySaveData(LOGIN_PROMO_PROGRESS);
     var promoData = GetPromoData(promoId);
 
-    log.info("looking for promo " + promoId);
     if (allPromoProgress.hasOwnProperty(promoId) && promoData != null) {
         log.info("Seems legit");
         var progress = allPromoProgress[promoId];
         var data = allPromoTitleData[promoId];
 
-        UpdatePromoProgress(progress);
+        allPromoProgress[allPromoProgress] = UpdatePromoProgress(progress);
 
+        log.info("updated, saving");
         SetReadOnlyData(LOGIN_PROMO_PROGRESS, allPromoProgress);
     }
 }
@@ -607,6 +607,9 @@ function GetPromoData(promoId) {
 function UpdatePromoProgress(progress) {
     progress[PROMO_LAST_COLLECTED_TIME] = Date.now();
     progress[PROMO_COLLECT_COUNT] += 1;
+    log.info("its " + JSON.stringify(progress));
+
+    return progress;
 }
 
 /////////////////////////////////////////////////
