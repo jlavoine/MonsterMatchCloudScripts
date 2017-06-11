@@ -356,7 +356,7 @@ handlers.initPlayer = function (args) {
     
     if (isLastLoginBeforeToday) {
         var inventory = GetPlayerInventory();
-        RefillGauntletKeys();
+        RefillGauntletKeys(inventory);
     }
 
     // do this LAST because above methods rely on the existing value
