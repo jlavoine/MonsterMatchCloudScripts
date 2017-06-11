@@ -352,12 +352,25 @@ function TestConsumption() {
 
 // use this method to init any read only fields the client may need
 handlers.initPlayer = function (args) {
-    AddMissingPlayerData();    
+    AddMissingPlayerData();
+    AddMissingInternalData();   
+}
+
+function AddMissingInternalData() {
+    var saveKeysToCheck = [LOGGED_IN_TIME];
+    var allSaveData = GetMultipleReadOnlySaveData(saveKeysToCheck, INTERNAL);
+
+    if (allSaveData.hasOwnProperty(LOGGED_IN_TIME)) {
+        allSaveData[LOGGED_IN_TIME] = Date.now().toString();
+    }
+
+    StringifySaveData(allSaveData);
+    SetSaveDataWithObject(allSaveData, INTERNAL);
 }
 
 function AddMissingPlayerData() {
     var saveKeysToCheck = [TREASURE_PROGRESS, TIMED_CHEST_PROGRESS, STATS_PROGRESS, LOGIN_PROMO_PROGRESS];
-    var allSaveData = GetMultipleReadOnlySaveData(saveKeysToCheck);
+    var allSaveData = GetMultipleReadOnlySaveData(saveKeysToCheck, READ_ONLY);
 
     if (!allSaveData.hasOwnProperty(TREASURE_PROGRESS)) {
         allSaveData[TREASURE_PROGRESS] = [];        
@@ -466,25 +479,6 @@ function SetLoggedInTime() {
     SetSaveData(LOGGED_IN_TIME, time.toString(), INTERNAL);
 }
 
-/// This method looks through all the player's data and makes sure that the default values get added
-/// if there were no values there.
-/*function AddMissingPlayerData() {
-    var baseMapSaveKey = MAP_SAVE_KEY + MODULE_BASE;
-    var saveKeysToCheck = [baseMapSaveKey, GetProgressKey(CLASS_BUILDING), GetProgressKey(CLASS_GUILD), GetProgressKey(CLASS_UNIT), TRAINER_SAVE_DATA, GAME_METRICS, REPEATABLE_QUEST_PROGRESS];
-    var allSaveData = GetMultipleReadOnlySaveData(saveKeysToCheck);
-
-    if (WipePlayerDataIfIntroTutorialIncomplete(allSaveData)) {
-        allSaveData = GetMultipleReadOnlySaveData(saveKeysToCheck);
-    }
-
-    var arraySaveKeys = [CLASS_BUILDING, CLASS_GUILD, CLASS_UNIT];
-    var titleData = GetMultipleTitleData(arraySaveKeys); // iterate through this structure in the method and parse everything
-
-    AddMissingSaveData(allSaveData, arraySaveKeys, titleData);
-    StringifySaveData(allSaveData);
-    SetSaveDataWithObject(allSaveData, READ_ONLY);
-}*/
-
 function WipePlayerDataIfIntroTutorialIncomplete(allSaveData) {
     if (allSaveData.hasOwnProperty(GAME_METRICS)) {
         var introTutorialMetric = GetGameMetric(TUTORIAL_INTRO);
@@ -572,19 +566,14 @@ function AddNewPlayerData_IfMissing(allSaveData) {
 
 function RefillGauntletKeys(inventory) {
     // being a little lazy about this because there will be very few gauntlet additions
-    var key0_count = GetItemUsesFromInventory(inventory, "Gauntlet_Key_0");
-    //var key1_count = GetItemUsesFromInventory(inventory, "Gauntlet_Key_1");
-
-    log.info(key0_count);
-    //log.info(key0_count + " vs " + key1_count);
-    
-    if (key0_count == 0) {
-        GrantItem("Gauntlet_Key_0");
+    int maxGauntlets = 1;
+    for (var i = 0; i < maxGauntlets; i++) {
+        var keyId = "Gauntlet_Key_" + i;
+        var keyCount = GetItemUsesFromInventory(inventory, keyId);
+        if (keyCount == 0) {
+            GrantItem(keyId);
+        }
     }
-
-    /*if (key1_count == 0) {
-        GrantItem("Gauntlet_Key_1");
-    }*/
 }
 
 /////////////////////////////////////////////////
@@ -1166,6 +1155,27 @@ function GetReadOnlySaveData(key) {
     var rawData = server.GetUserReadOnlyData({ PlayFabId: currentPlayerId, Keys: [key] });
 
     return GetSaveObjectFromRawData(rawData, key); 
+}
+
+function GetMultipleSaveDatas(keys, dataType) {
+    var saveDataObject;
+    if (dataType == READ_ONLY) {
+        saveDataObject = server.GetUserReadOnlyData({ PlayFabId: currentPlayerId, Keys: keys });
+    } else {
+        saveDataObject = server.GetUserInternalData({ PlayFabId: currentPlayerId, Keys: keys });
+    }
+
+    /// Iterate through all the save data in the save data object gotten from the server.
+    /// It re-inserts the object's VALUE (the actual data) into the object. This is necessary because
+    /// when we re-save the object, this is the format the API wants it in.
+    for (var data in allSaveData) {        
+        var saveObject = allSaveData[data];
+        var saveData = saveObject[VALUE];
+        
+        allSaveData[data] = JSON.parse(saveData);
+    }
+
+    return allSaveData; 
 }
 
 function GetMultipleReadOnlySaveData(keys) {
