@@ -944,7 +944,7 @@ handlers.getDungeonGameSession = function(args) {
 
         SetBoardRulesOnSession( dungeonSession, dungeonData, gameType );
         SetMonstersOnSession(dungeonSession, dungeonData);
-        SetRewardsOnSession(dungeonSession[DUNGEON_SESSION_REWARDS], dungeonData);
+        SetRewardsOnSession(gameType, dungeonSession[DUNGEON_SESSION_REWARDS], dungeonData);
 
         SaveSessionRewards(dungeonSession[DUNGEON_SESSION_REWARDS]);
 
@@ -1000,7 +1000,11 @@ function SetMonstersOnSession(dungeonSession, dungeonData) {
 }
 
 // this method is mostly temp until all reward types are implemented
-function SetRewardsOnSession(sessionRewardsList, dungeonData) {
+function SetRewardsOnSession(gameType, sessionRewardsList, dungeonData) {
+    if (gameType == GAUNTLET_GAME_TYPE) {
+        return;
+    }
+
     for (var i = 0; i < 3; i++) {
         var defaultGoldReward = GetGoldRewardFromDungeonData(dungeonData);
         var min = -.2;
