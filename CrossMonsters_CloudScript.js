@@ -605,11 +605,13 @@ function HasEnoughGauntletKeysForIndex(index) {
     return hasEnough;
 }
 
-function RemoveGauntletKeysForIndex(index) {
-    log.info("Removing gauntlet key for " + index);
+function RemoveGauntletKeysForIndex(index) {    
     var keyId = GetGauntletKeyIdForIndex(index);
+    log.info("Removing gauntlet key " + keyId);
 
-    server.ConsumeItem({PlayFabId: currentPlayerId, ItemInstanceId: keyId, ConsumeCount: 1});
+    var inventory = GetPlayerInventory();
+    var instanceId = GetItemIdFromInventory(inventory, keyId);
+    server.ConsumeItem({PlayFabId: currentPlayerId, ItemInstanceId: instanceId, ConsumeCount: 1});
 }
 
 /////////////////////////////////////////////////
