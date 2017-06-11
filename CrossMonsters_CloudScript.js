@@ -318,7 +318,8 @@ handlers.onLogin = function (args) {
 
 function IsLastLoginBeforeToday() {
     var lastLoginTime = GetLoggedInTime();
-    var lastLoginDay = new Date(lastLoginTime.getFullYear(), lastLoginTime.getMonth(), lastLoginTime.getDate())
+    var lastLoginDate = new Date(lastLoginTime);
+    var lastLoginDay = new Date(lastLoginDate.getFullYear(), lastLoginDate.getMonth(), lastLoginDate.getDate())
     var now = new Date();
     var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
