@@ -15,6 +15,7 @@
 /// Title data
 const MONSTER_DATA_TITLE_KEY = "MonsterData";
 const DUNGEON_DATA_TITLE_KEY = "DungeonData";
+const GAUNTLET_DUNGEON_DATA_TITLE_KEY = "GauntletDungeonData";
 const MONSTER_GROUP_DATA_TITLE_KEY = "MonsterGroupData";
 const RARITY_DATA_TITLE_KEY = "RarityData";
 const TIMED_CHEST_TITLE_KEY = "TimedChests";
@@ -909,7 +910,7 @@ handlers.getDungeonGameSession = function(args) {
     var gameType = args.data["GameType"];
     var areaId = GetNumberFromArgs(args, AREA_ID);
     var dungeonId = GetNumberFromArgs(args, DUNGEON_ID);
-    var dungeonData = GetDungeonData(areaId, dungeonId);
+    var dungeonData = GetDungeonData(gameType, areaId, dungeonId);
 
     SetBoardRulesOnSession( dungeonSession, dungeonData, gameType );
     SetMonstersOnSession(dungeonSession[DUNGEON_SESSION_MONSTERS], dungeonData);
@@ -1039,20 +1040,28 @@ function AddMonsterToList(monsterList, monster) {
 /// DungeonData
 /////////////////////////////////////////////////
 
-function GetDungeonData(areaId, dungeonId) {
-    log.info("Searching dungeon data for " + areaId + "-" + dungeonId);
+function GetDungeonData(gameType, areaId, dungeonId) {
+    log.info("Searching dungeon data for " + gameType "-" + areaId + "-" + dungeonId);
 
-    var allDungeonData = GetTitleData(DUNGEON_DATA_TITLE_KEY);
+    var titleKey = GetDungeonDataTitleKeyForType(gameType);
+    var allDungeonData = GetTitleData(titleKey);
     for (var index in allDungeonData) {
         var dungeonData = allDungeonData[index];
-        if (dungeonData[AREA_ID] == areaId && dungeonData[DUNGEON_ID] == dungeonId) {
-            log.info("Found it!");
+        if (dungeonData[AREA_ID] == areaId && dungeonData[DUNGEON_ID] == dungeonId) {            
             return dungeonData;
         }
     }
 
     log.info("Could not find it!");
     return null;
+}
+
+function GetDungeonDataTitleKeyForType(gameType) {
+    if (gameType == "Gauntlet") {
+        return GAUNTLET_DUNGEON_DATA_TITLE_KEY;
+    } else {
+        return DUNGEON_DATA_TITLE_KEY;
+    }
 }
 
 function GetMaxMonstersFromDungeonData(dungeonData) {
