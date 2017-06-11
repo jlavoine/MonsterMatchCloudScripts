@@ -569,7 +569,7 @@ function AddNewPlayerData_IfMissing(allSaveData) {
 
 function RefillGauntletKeys(inventory) {
     // being a little lazy about this because there will be very few gauntlet additions
-    int maxGauntlets = 1;
+    var maxGauntlets = 1;
     for (var i = 0; i < maxGauntlets; i++) {
         var keyId = "Gauntlet_Key_" + i;
         var keyCount = GetItemUsesFromInventory(inventory, keyId);
