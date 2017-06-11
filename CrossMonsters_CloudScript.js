@@ -62,6 +62,7 @@ const TREASURE_PROGRESS = "TreasureProgress";
 const TIMED_CHEST_PROGRESS = "TimedChestProgress";
 const LOGIN_PROMO_PROGRESS = "LoginPromoProgress";
 const STATS_PROGRESS = "StatsProgress";
+const LOGGED_IN_TIME = "LastLoginTime";
 
 /// API specific
 const VIRTUAL_CURRENCY = "VirtualCurrency"; // API key for virtual currency
@@ -1167,12 +1168,10 @@ function GetReadOnlySaveData(key) {
 }
 
 function GetMultipleSaveDatas(keys, dataType) {
-    log.info("a");
     var saveDataObject;
     if (dataType == READ_ONLY) {
         saveDataObject = server.GetUserReadOnlyData({ PlayFabId: currentPlayerId, Keys: keys });
     } else {
-        log.info("b");
         saveDataObject = server.GetUserInternalData({ PlayFabId: currentPlayerId, Keys: keys });
     }
 
@@ -1182,10 +1181,9 @@ function GetMultipleSaveDatas(keys, dataType) {
     for (var data in allSaveData) {        
         var saveObject = allSaveData[data];
         var saveData = saveObject[VALUE];
-        log.info(saveData);
         allSaveData[data] = JSON.parse(saveData);
     }
-    log.info(JSON.stringify(allSaveData));
+
     return allSaveData; 
 }
 
