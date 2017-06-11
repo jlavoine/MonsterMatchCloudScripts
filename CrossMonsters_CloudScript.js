@@ -1175,6 +1175,8 @@ function GetMultipleSaveDatas(keys, dataType) {
         saveDataObject = server.GetUserInternalData({ PlayFabId: currentPlayerId, Keys: keys });
     }
 
+    var allSaveData = saveDataObject[DATA];
+
     /// Iterate through all the save data in the save data object gotten from the server.
     /// It re-inserts the object's VALUE (the actual data) into the object. This is necessary because
     /// when we re-save the object, this is the format the API wants it in.
