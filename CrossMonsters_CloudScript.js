@@ -573,17 +573,18 @@ function AddNewPlayerData_IfMissing(allSaveData) {
 function RefillGauntletKeys(inventory) {
     // being a little lazy about this because there will be very few gauntlet additions
     var key0_count = GetItemUsesFromInventory(inventory, "Gauntlet_Key_0");
-    var key1_count = GetItemUsesFromInventory(inventory, "Gauntlet_Key_1");
+    //var key1_count = GetItemUsesFromInventory(inventory, "Gauntlet_Key_1");
 
-    log.info(key0_count + " vs " + key1_count);
+    log.info(key0_count);
+    //log.info(key0_count + " vs " + key1_count);
     
     if (key0_count == 0) {
         GrantItem("Gauntlet_Key_0");
     }
 
-    if (key1_count == 0) {
+    /*if (key1_count == 0) {
         GrantItem("Gauntlet_Key_1");
-    }
+    }*/
 }
 
 /////////////////////////////////////////////////
