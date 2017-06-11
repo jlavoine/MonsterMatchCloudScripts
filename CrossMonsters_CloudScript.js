@@ -53,6 +53,7 @@ const CURRENT_DUNGEON_REWARDS = "CurrentDungeonRewards";
 // Dungeon Session
 const DUNGEON_SESSION_MONSTERS = "Monsters";
 const DUNGEON_SESSION_REWARDS = "Rewards";
+const DUNGEON_SESSIN_GAME_MODE = "GameMode;"
 
 // Monster Group Data
 const GROUP_MONSTERS = "Monsters";
@@ -939,7 +940,7 @@ handlers.getDungeonGameSession = function(args) {
     var dungeonId = GetNumberFromArgs(args, DUNGEON_ID);
 
     if (ShouldGenerateDungeonSession(gameType, areaId)) {
-        var dungeonSession = CreateDungeonSessionData();                        
+        var dungeonSession = CreateDungeonSessionData(gameType);                        
         var dungeonData = GetDungeonData(gameType, areaId, dungeonId);
 
         SetBoardRulesOnSession( dungeonSession, dungeonData, gameType );
@@ -966,10 +967,11 @@ function ShouldGenerateDungeonSession(gameType, areaId, dungeonId) {
     }
 }
 
-function CreateDungeonSessionData() {
+function CreateDungeonSessionData(gameType) {
     var session = {};
     session[DUNGEON_SESSION_MONSTERS] = [];
     session[DUNGEON_SESSION_REWARDS] = [];
+    session[DUNGEON_SESSIN_GAME_MODE] = gameType;
 
     return session;
 }
