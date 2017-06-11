@@ -365,7 +365,7 @@ function AddMissingInternalData() {
     log.info("AddMissingInternalData()");
 
     var saveKeysToCheck = [LOGGED_IN_TIME];
-    var allSaveData = GetMultipleReadOnlySaveData(saveKeysToCheck, INTERNAL);
+    var allSaveData = GetMultipleSaveDatas(saveKeysToCheck, INTERNAL);
 
     if (!allSaveData.hasOwnProperty(LOGGED_IN_TIME)) {
         log.info("It was missing");
@@ -379,7 +379,7 @@ function AddMissingInternalData() {
 
 function AddMissingPlayerData() {
     var saveKeysToCheck = [TREASURE_PROGRESS, TIMED_CHEST_PROGRESS, STATS_PROGRESS, LOGIN_PROMO_PROGRESS];
-    var allSaveData = GetMultipleReadOnlySaveData(saveKeysToCheck, READ_ONLY);
+    var allSaveData = GetMultipleSaveDatas(saveKeysToCheck, READ_ONLY);
 
     if (!allSaveData.hasOwnProperty(TREASURE_PROGRESS)) {
         allSaveData[TREASURE_PROGRESS] = [];        
@@ -1185,23 +1185,6 @@ function GetMultipleSaveDatas(keys, dataType) {
     }
 
     return allSaveData; 
-}
-
-function GetMultipleReadOnlySaveData(keys) {
-    var saveDataObject = server.GetUserReadOnlyData({ PlayFabId: currentPlayerId, Keys: keys });
-    var allSaveData = saveDataObject[DATA];
-
-    /// Iterate through all the save data in the save data object gotten from the server.
-    /// It re-inserts the object's VALUE (the actual data) into the object. This is necessary because
-    /// when we re-save the object, this is the format the API wants it in.
-    for (var data in allSaveData) {        
-        var saveObject = allSaveData[data];
-        var saveData = saveObject[VALUE];
-        
-        allSaveData[data] = JSON.parse(saveData);
-    }
-
-    return allSaveData;    
 }
 
 function GetAllReadOnlySaveData() {
