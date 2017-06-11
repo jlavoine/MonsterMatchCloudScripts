@@ -368,10 +368,12 @@ function AddMissingInternalData() {
     var allSaveData = GetMultipleReadOnlySaveData(saveKeysToCheck, INTERNAL);
 
     if (!allSaveData.hasOwnProperty(LOGGED_IN_TIME)) {
+        log.info("It was missing");
         allSaveData[LOGGED_IN_TIME] = Date.now().toString();
     }
 
     StringifySaveData(allSaveData);
+    log.info(allSaveData);
     SetSaveDataWithObject(allSaveData, INTERNAL);
 }
 
