@@ -31,6 +31,7 @@ const NON_COMMON_MONSTER_GROUP = "NonCommonMonsterGroups";
 const RULE_ALLOW_DIAGONALS = "AllowDiagonalMoves";
 const RULE_STRAIGHT_LINES = "StraightLinesOnly";
 const RULE_ROTATE_PIECE = "ShouldRotatePiecesAfterUse";
+const NUM_WAVES = "NumWaves";
 
 // DungeonRewardData
 const REWARD_ID = "Id";
@@ -942,7 +943,7 @@ handlers.getDungeonGameSession = function(args) {
         var dungeonData = GetDungeonData(gameType, areaId, dungeonId);
 
         SetBoardRulesOnSession( dungeonSession, dungeonData, gameType );
-        SetMonstersOnSession(dungeonSession[DUNGEON_SESSION_MONSTERS], dungeonData);
+        SetMonstersOnSession(dungeonSession, dungeonData);
         SetRewardsOnSession(dungeonSession[DUNGEON_SESSION_REWARDS], dungeonData);
 
         SaveSessionRewards(dungeonSession[DUNGEON_SESSION_REWARDS]);
@@ -988,9 +989,12 @@ function SetBoardRulesOnSession( dungeonSession, dungeonData, gameType ) {
     }
 }
 
-function SetMonstersOnSession(sessionMonsterList, dungeonData) {
+function SetMonstersOnSession(dungeonSession, dungeonData) {
     log.info("Setting monsters on dungeon session");
+    var numWaves = GetNumWavesFromDungeonData(dungeonData);
+    dungeonSession[NUM_WAVES] = numWaves;
 
+    var sessionMonsterList = dungeonSession[DUNGEON_SESSION_MONSTERS];
     FillMonsterListWithNonCommonMonsters(sessionMonsterList, dungeonData);
     FillRemainingMonstersWithCommonMonsters(sessionMonsterList, dungeonData);
 }
@@ -1114,6 +1118,10 @@ function GetMaxMonstersFromDungeonData(dungeonData) {
 
 function GetGoldRewardFromDungeonData(dungeonData) {
     return dungeonData[GOLD_REWARD];
+}
+
+function GetNumWavesFromDungeonData(dungeonData) {
+    return dungeonData[NUM_WAVES];
 }
 
 function GetBoardRuleFromDungeonData(dungeonData, ruleKey) {
