@@ -596,6 +596,7 @@ function GetGauntletKeyIdForIndex(index) {
 }
 
 function HasEnoughGauntletKeysForIndex(index) {
+    var inventory = GetPlayerInventory();
     var keyId = GetGauntletKeyIdForIndex(index);
     var keyCount = GetItemUsesFromInventory(inventory, keyId);
     var hasEnough = keyCount > 0;
