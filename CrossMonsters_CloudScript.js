@@ -345,6 +345,8 @@ function TestConsumption() {
 
 // use this method to init any read only fields the client may need. This happens AFTER OnLogin()!
 handlers.initPlayer = function (args) {
+    log.info("initPlayer()")
+
     AddMissingInternalData();
     AddMissingPlayerData();    
 
@@ -360,10 +362,12 @@ handlers.initPlayer = function (args) {
 }
 
 function AddMissingInternalData() {
+    log.info("AddMissingInternalData()");
+
     var saveKeysToCheck = [LOGGED_IN_TIME];
     var allSaveData = GetMultipleReadOnlySaveData(saveKeysToCheck, INTERNAL);
 
-    if (allSaveData.hasOwnProperty(LOGGED_IN_TIME)) {
+    if (!allSaveData.hasOwnProperty(LOGGED_IN_TIME)) {
         allSaveData[LOGGED_IN_TIME] = Date.now().toString();
     }
 
