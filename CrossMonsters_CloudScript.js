@@ -53,7 +53,7 @@ const CURRENT_DUNGEON_REWARDS = "CurrentDungeonRewards";
 // Dungeon Session
 const DUNGEON_SESSION_MONSTERS = "Monsters";
 const DUNGEON_SESSION_REWARDS = "Rewards";
-const DUNGEON_SESSIN_GAME_MODE = "GameMode;"
+const DUNGEON_SESSIN_GAME_MODE = "GameMode";
 
 // Monster Group Data
 const GROUP_MONSTERS = "Monsters";
