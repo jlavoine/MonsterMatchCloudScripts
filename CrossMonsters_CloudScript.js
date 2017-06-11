@@ -596,16 +596,18 @@ function GetGauntletKeyIdForIndex(index) {
 }
 
 function HasEnoughGauntletKeysForIndex(index) {
-    var keyId = GetGauntletKeyIdForIndex(i);
+    var keyId = GetGauntletKeyIdForIndex(index);
     var keyCount = GetItemUsesFromInventory(inventory, keyId);
     var hasEnough = keyCount > 0;
 
+    log.info("Does have enough gauntlet keys for " + index + ": " + hasEnough);
     return hasEnough;
 }
 
 function RemoveGauntletKeysForIndex(index) {
+    log.info("Removing gauntlet key for " + index);
     var keyId = GetGauntletKeyIdForIndex(i);
-    
+
     server.ConsumeItem({PlayFabId: currentPlayerId, ItemInstanceId: keyId, ConsumeCount: 1});
 }
 
