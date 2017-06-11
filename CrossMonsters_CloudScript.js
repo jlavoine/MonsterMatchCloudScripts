@@ -38,6 +38,11 @@ const REWARD_COUNT = "Count";
 const REWARD_TYPE = "LootType";
 const REWARD_TYPE_GOLD = "Gold";
 
+// game types
+const STANDARD_GAME_TYPE = "standard";
+const PUZZLE_GAME_TYPE = "puzzle";
+const GAUNTLET_GAME_TYPE = "Gauntlet";
+
 // Currencies
 const CURRENCY_GOLD = "G1";
 
@@ -578,12 +583,30 @@ function RefillGauntletKeys(inventory) {
     // being a little lazy about this because there will be very few gauntlet additions
     var maxGauntlets = 1;
     for (var i = 0; i <= maxGauntlets; i++) {
-        var keyId = "Gauntlet_Key_" + i;
+        var keyId = GetGauntletKeyIdForIndex(i);
         var keyCount = GetItemUsesFromInventory(inventory, keyId);
         if (keyCount == 0) {
             GrantItem(keyId);
         }
     }
+}
+
+function GetGauntletKeyIdForIndex(index) {
+    return "Gauntlet_Key_" + index;
+}
+
+function HasEnoughGauntletKeysForIndex(index) {
+    var keyId = GetGauntletKeyIdForIndex(i);
+    var keyCount = GetItemUsesFromInventory(inventory, keyId);
+    var hasEnough = keyCount > 0;
+
+    return hasEnough;
+}
+
+function RemoveGauntletKeysForIndex(index) {
+    var keyId = GetGauntletKeyIdForIndex(i);
+    
+    server.ConsumeItem({PlayFabId: currentPlayerId, ItemInstanceId: keyId, ConsumeCount: 1});
 }
 
 /////////////////////////////////////////////////
@@ -905,20 +928,36 @@ function CreateGoldReward(totalGold) {
 handlers.getDungeonGameSession = function(args) {
     log.info("getDungeonGameSession");
 
-    var dungeonSession = CreateDungeonSessionData();
-
     var gameType = args.data["GameType"];
     var areaId = GetNumberFromArgs(args, AREA_ID);
     var dungeonId = GetNumberFromArgs(args, DUNGEON_ID);
-    var dungeonData = GetDungeonData(gameType, areaId, dungeonId);
 
-    SetBoardRulesOnSession( dungeonSession, dungeonData, gameType );
-    SetMonstersOnSession(dungeonSession[DUNGEON_SESSION_MONSTERS], dungeonData);
-    SetRewardsOnSession(dungeonSession[DUNGEON_SESSION_REWARDS], dungeonData);
+    if (ShouldGenerateDungeonSession(gameType, areaId)) {
+        var dungeonSession = CreateDungeonSessionData();                        
+        var dungeonData = GetDungeonData(gameType, areaId, dungeonId);
 
-    SaveSessionRewards(dungeonSession[DUNGEON_SESSION_REWARDS]);
+        SetBoardRulesOnSession( dungeonSession, dungeonData, gameType );
+        SetMonstersOnSession(dungeonSession[DUNGEON_SESSION_MONSTERS], dungeonData);
+        SetRewardsOnSession(dungeonSession[DUNGEON_SESSION_REWARDS], dungeonData);
 
-    return ReturnDataToClientFromServer(dungeonSession);
+        SaveSessionRewards(dungeonSession[DUNGEON_SESSION_REWARDS]);
+
+        if (gameType == GAUNTLET_GAME_TYPE) {
+            RemoveGauntletKeysForIndex(areaId);
+        }
+
+        return ReturnDataToClientFromServer(dungeonSession);
+    } else {
+        return null;
+    }
+}
+
+function ShouldGenerateDungeonSession(gameType, areaId, dungeonId) {
+    if (gameType == GAUNTLET_GAME_TYPE) {
+        return HasEnoughGauntletKeysForIndex(areaId);
+    } else {
+        return true;
+    }
 }
 
 function CreateDungeonSessionData() {
@@ -933,7 +972,7 @@ function SetBoardRulesOnSession( dungeonSession, dungeonData, gameType ) {
     log.info("Setting game rules for game type: " + gameType);
 
     // for now these are constants; not sure how I want to do this exactly yet
-    if (gameType == "puzzle") {
+    if (gameType == PUZZLE_GAME_TYPE) {
         dungeonSession[RULE_ALLOW_DIAGONALS] = true;
         dungeonSession[RULE_STRAIGHT_LINES] = true;
         dungeonSession[RULE_ROTATE_PIECE] = false; 
@@ -1057,7 +1096,7 @@ function GetDungeonData(gameType, areaId, dungeonId) {
 }
 
 function GetDungeonDataTitleKeyForType(gameType) {
-    if (gameType == "Gauntlet") {
+    if (gameType == GAUNTLET_GAME_TYPE) {
         return GAUNTLET_DUNGEON_DATA_TITLE_KEY;
     } else {
         return DUNGEON_DATA_TITLE_KEY;
