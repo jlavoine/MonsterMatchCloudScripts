@@ -370,12 +370,10 @@ function AddMissingInternalData() {
     var allSaveData = GetMultipleSaveDatas(saveKeysToCheck, INTERNAL);
 
     if (!allSaveData.hasOwnProperty(LOGGED_IN_TIME)) {
-        log.info("It was missing");
         allSaveData[LOGGED_IN_TIME] = Date.now().toString();
     }
 
     StringifySaveData(allSaveData);
-    log.info(allSaveData);
     SetSaveDataWithObject(allSaveData, INTERNAL);
 }
 
@@ -578,7 +576,7 @@ function AddNewPlayerData_IfMissing(allSaveData) {
 function RefillGauntletKeys(inventory) {
     // being a little lazy about this because there will be very few gauntlet additions
     var maxGauntlets = 1;
-    for (var i = 0; i < maxGauntlets; i++) {
+    for (var i = 0; i <= maxGauntlets; i++) {
         var keyId = "Gauntlet_Key_" + i;
         var keyCount = GetItemUsesFromInventory(inventory, keyId);
         if (keyCount == 0) {
