@@ -309,12 +309,27 @@ function GetGameMetric(metricName) {
 
 handlers.onLogin = function (args) {
     log.info("onLogin()");
-    //AddMissingPlayerData(); 
-    //SetLoggedInTime();
-    TestGrant();
-    //TestConsumption();
+    var isLastLoginBeforeToday = IsLastLoginBeforeToday();    
+    
+    if (isLastLoginBeforeToday) {
+        var inventory = GetPlayerInventory();
+        RefillGauntletKeys();
+    }
+
+    // do this LAST because above methods rely on the existing value
+    SetLoggedInTime();
 
     return ReturnDataToClientFromServer(Date.now());
+}
+
+function IsLastLoginBeforeToday() {
+    var lastLoginTime = GetLoggedInTime();
+    var lastLoginDay = new Date(lastLoginTime.getFullYear(), lastLoginTime.getMonth(), lastLoginTime.getDate())
+    var now = new Date();
+    var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+    log.info(today + " vs " + lastLoginDay);
+    return today > lastLoginDay;
 }
 
 function TestGrant() {
@@ -337,7 +352,7 @@ function TestConsumption() {
 
 // use this method to init any read only fields the client may need
 handlers.initPlayer = function (args) {
-    AddMissingPlayerData();
+    AddMissingPlayerData();    
 }
 
 function AddMissingPlayerData() {
@@ -552,6 +567,30 @@ function AddNewPlayerData_IfMissing(allSaveData) {
 /////////////////////////////////////////////////
 
 /////////////////////////////////////////////////
+/// Gauntlet
+////////////////////////////////////////////////
+
+function RefillGauntletKeys(inventory) {
+    // being a little lazy about this because there will be very few gauntlet additions
+    var key0_count = GetItemUsesFromInventory(inventory, "Gauntlet_Key_0");
+    var key1_count = GetItemUsesFromInventory(inventory, "Gauntlet_Key_1");
+
+    log.info(key0_count + " vs " + key1_count);
+    
+    if (key0_count == 0) {
+        GrantItem("Gauntlet_Key_0");
+    }
+
+    if (key1_count == 0) {
+        GrantItem("Gauntlet_Key_1");
+    }
+}
+
+/////////////////////////////////////////////////
+/// ~Gauntlet
+////////////////////////////////////////////////
+
+/////////////////////////////////////////////////
 /// LoginPromotions
 ////////////////////////////////////////////////
 
@@ -595,8 +634,6 @@ function ShouldAwardPromoReward(progress, data) {
     var canCollect = !HasCollectedPromoRewardToday(progress, data);
     var rewardsRemaining = AreRewardsRemainingInPromo(progress, data);
 
-    log.info(rewardsRemaining + " and " + canCollect);
-
     return canCollect && rewardsRemaining;
 }
 
@@ -604,7 +641,6 @@ function AreRewardsRemainingInPromo(progress, data) {
     var upcomingRewardIndex = progress[PROMO_COLLECT_COUNT]; 
     var totalRewards = data["RewardData"].length;
 
-    log.info("Comparing " + upcomingRewardIndex + " to " + totalRewards);
     return upcomingRewardIndex < totalRewards;
 }
 
@@ -616,7 +652,6 @@ function HasCollectedPromoRewardToday(progress, data) {
     var now = new Date();
     var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
-    log.info("Comparing " + lastCollectedDay + " to " + today);
     return lastCollectedDay >= today;
 }
 
@@ -1253,6 +1288,11 @@ function GetItemInstanceFromInventory(inventory, itemKey) {
     }
     
     return null;   
+}
+
+function GrantItem(itemId) {
+    log.info("Granting item: " + itemId);
+    server.GrantItemsToUser({PlayFabId: currentPlayerId, ItemIds: [itemId]});
 }
 
 /////////////////////////////////////////////////
