@@ -1041,7 +1041,7 @@ function AddMonsterToList(monsterList, monster) {
 /////////////////////////////////////////////////
 
 function GetDungeonData(gameType, areaId, dungeonId) {
-    log.info("Searching dungeon data for " + gameType "-" + areaId + "-" + dungeonId);
+    log.info("Searching dungeon data for " + gameType + "-" + areaId + "-" + dungeonId);
 
     var titleKey = GetDungeonDataTitleKeyForType(gameType);
     var allDungeonData = GetTitleData(titleKey);
