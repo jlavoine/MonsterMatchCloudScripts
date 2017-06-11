@@ -607,7 +607,7 @@ function HasEnoughGauntletKeysForIndex(index) {
 
 function RemoveGauntletKeysForIndex(index) {
     log.info("Removing gauntlet key for " + index);
-    var keyId = GetGauntletKeyIdForIndex(i);
+    var keyId = GetGauntletKeyIdForIndex(index);
 
     server.ConsumeItem({PlayFabId: currentPlayerId, ItemInstanceId: keyId, ConsumeCount: 1});
 }
