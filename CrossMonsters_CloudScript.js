@@ -307,17 +307,10 @@ function GetGameMetric(metricName) {
 /// Login
 /////////////////////////////////////////////////
 
+// this method is the FIRST THING that happens. Don't put anything in here! It's used to just return server time.
+// to do things with the player, use initPlayer()
 handlers.onLogin = function (args) {
     log.info("onLogin()");
-    var isLastLoginBeforeToday = IsLastLoginBeforeToday();    
-    
-    if (isLastLoginBeforeToday) {
-        var inventory = GetPlayerInventory();
-        RefillGauntletKeys();
-    }
-
-    // do this LAST because above methods rely on the existing value
-    SetLoggedInTime();
 
     return ReturnDataToClientFromServer(Date.now());
 }
@@ -350,10 +343,20 @@ function TestConsumption() {
     server.ConsumeItem({PlayFabId: currentPlayerId, ItemInstanceId: real, ConsumeCount: 1});
 }
 
-// use this method to init any read only fields the client may need
+// use this method to init any read only fields the client may need. This happens AFTER OnLogin()!
 handlers.initPlayer = function (args) {
-    AddMissingPlayerData();
-    AddMissingInternalData();   
+    AddMissingInternalData();
+    AddMissingPlayerData();    
+
+    var isLastLoginBeforeToday = IsLastLoginBeforeToday();    
+    
+    if (isLastLoginBeforeToday) {
+        var inventory = GetPlayerInventory();
+        RefillGauntletKeys();
+    }
+
+    // do this LAST because above methods rely on the existing value
+    SetLoggedInTime();
 }
 
 function AddMissingInternalData() {
